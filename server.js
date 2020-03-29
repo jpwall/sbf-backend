@@ -29,8 +29,7 @@ server.get('/users', async (req, res) => {
 server.get('/insert-user', async (req, res) => {
     try {
         let result = await db.query("INSERT INTO Users (full_name, email, pw) VALUES ('Andrei K.', 'ak97@uw.edu', 'p1');");
-        console.log(result);
-        res.status(200).send(result.rows);
+        res.status(200).send("Successfully added user!");
     } catch (err) {
         res.status(400).send(err);
     }
