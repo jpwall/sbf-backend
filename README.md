@@ -1,7 +1,7 @@
 # sbf-backend
 Backend for upcoming study buddy finding website
-#API Endpoints
-##Courses Endpoints
+# API Endpoints
+## Courses Endpoints
 ### Fetching Available Courses
 **Request Format:** `api/courses`
 **Request Type:** `GET`
