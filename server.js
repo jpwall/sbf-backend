@@ -2,10 +2,13 @@ const express = require('express');
 const server = express();
 const PORT = process.env.PORT || 3000;
 const { Pool, Client } = require('pg');
+const cors = require('cors');
 
 const db = new Client({
     connectionString: process.env.DATABASE_URL
 })
+
+server.use(cors());
 
 db.connect(err => {
     if (err) {
@@ -34,4 +37,8 @@ server.get('/insert-user', async (req, res) => {
         res.status(400).send(err);
     }
 });
+
+server.get('/courses', async (req, res) => {
+    res.status(200).send(['course one', 'course two']);
+})
 
