@@ -28,6 +28,14 @@ server.use(bodyParser.json());
 const users = require('./routes/users');
 server.use('/users', users);
 
+// Courses
+const courses = require('./routes/courses');
+server.use('/courses', courses);
+
+// Preferences
+const preferences = require('./routes/preferences');
+server.use('/preferences', preferences);
+
 // Passport Middleware
 const passport = require('passport');
 server.use(passport.initialize());
