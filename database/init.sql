@@ -1,10 +1,11 @@
 CREATE TABLE IF NOT EXISTS Users (
   uid SERIAL PRIMARY KEY,
   full_name TEXT NOT NULL,
-  email TEXT NOT NULL,
-  pw char(50) NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  password TEXT NOT NULL,
   last_active timestamp,
-  phone_number int
+  phone_number int,
+  access_level int DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS Subjects (
