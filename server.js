@@ -24,17 +24,9 @@ server.use(cors());
 const bodyParser = require('body-parser');
 server.use(bodyParser.json());
 
-// Users
-const users = require('./routes/users');
-server.use('/users', users);
-
-// Courses
-const courses = require('./routes/courses');
-server.use('/courses', courses);
-
-// Preferences
-const preferences = require('./routes/preferences');
-server.use('/preferences', preferences);
+// Api
+const api = require('./routes/api');
+server.use('/api', api);
 
 // Passport Middleware
 const passport = require('passport');
