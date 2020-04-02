@@ -35,9 +35,14 @@ server.use(passport.session())
 require('./config/passport')(passport);
 
 // Index route
-server.get('/', (res, req) => {
+server.get('/', (req, res) => {
     res.status(400).send("Invalid endpoint!");
+})
+
+server.get('/try', (req, res) => {
+    res.status(200).json({message: "Hello"});
 })
 
 server.listen(PORT, () => console.log(`Server running on ${PORT}`)); 
 
+module.exports = server; // for testing
