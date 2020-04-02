@@ -3,19 +3,6 @@ const express = require('express');
 const server = express();
 const PORT = process.env.PORT || 3000;
 
-// PSQL Set Up
-const {Client} = require('pg');
-const db = new Client({
-    connectionString: process.env.DATABASE_URL
-});
-db.connect(err => {
-    if (err) {
-      console.error('connection error', err.stack)
-    } else {
-        console.log('connected')
-    }
-})
-
 // CORS
 const cors = require('cors');
 server.use(cors());
@@ -40,7 +27,7 @@ server.get('/', (req, res) => {
 })
 
 server.get('/try', (req, res) => {
-    res.status(200).json({message: "Hello"});
+    res.status(200).json({message: "Helloo"});
 })
 
 server.listen(PORT, () => console.log(`Server running on ${PORT}`)); 
