@@ -1,10 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const Course = require('../models/course');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 router.get('', (req, res, next) => {
-    res.status(200).json({"courses": [{"sid": 1, "subject_name": "CSE154"}, {"sid": 2, "subject_name": "CSE666"}]});
+    Course.getAllCourses((err, data) => {
+        if (err) {
+            res.status(400).json({success: false, err: err});
+        } else {
+            res.status(200).json(data);
+        }
+    });
 });
 
 router.get('/get', (req, res, next) => {
@@ -12,7 +19,13 @@ router.get('/get', (req, res, next) => {
 });
 
 router.post('/add', (req, res, next) => {
-    res.status(200).json({success: true, msg: "Ok!"});
+    Course.addCourse(req.body.name, req.body.description, (err, data) => {
+        if (err) {
+            res.status(400).json({success: false, msg: "Course already exists!"});
+        } else {
+            res.status(200).json({success: true, msg: "Ok!"});
+        }
+    });
 });
 
 router.post('/remove', (req, res, next) => {
