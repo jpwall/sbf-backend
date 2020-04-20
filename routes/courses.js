@@ -19,7 +19,7 @@ router.get('/get', (req, res, next) => {
 });
 
 router.post('/add', (req, res, next) => {
-    Course.addCourse(req.body.name, req.body.description, (err, data) => {
+    Course.addCourse(req.body.name.toUpperCase().replace(/\s/g, ''), req.body.description, (err, data) => {
         if (err) {
             res.status(400).json({success: false, msg: "Course already exists!"});
         } else {
