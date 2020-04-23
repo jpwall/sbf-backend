@@ -27,17 +27,17 @@ module.exports.getUserByEmail = (email, callback) => {
         })
 }
 
-module.exports.addUser = (name, email, password, callback) => {
+module.exports.addUser = (name, email, password, phone, callback) => {
     const query = `
         INSERT INTO Users
-        (full_name, email, password)
-        VALUES ($1, $2, $3)
+        (full_name, email, password, phone_number)
+        VALUES ($1, $2, $3, $4)
         RETURNING *`
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(password, salt, (err, hash) => {
             if (err) throw err;
             password = hash;
-            db.one(query, [name, email, password])
+            db.one(query, [name, email, password, phone])
                 .then((res) => {
                     callback(null, res);
                 })

@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS Users (
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
   last_active timestamp,
-  phone_number int,
+  phone_number bigint,
   access_level int DEFAULT 1
 );
 
