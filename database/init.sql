@@ -17,8 +17,6 @@ CREATE TABLE IF NOT EXISTS Courses (
 CREATE TABLE IF NOT EXISTS Preferences (
   uid SERIAL REFERENCES Users(uid),
   cid SERIAL REFERENCES Courses(cid),
-  time_from timestamp,
-  time_to timestamp,
   min_grade float(2),
   PRIMARY KEY (uid,cid)
 );

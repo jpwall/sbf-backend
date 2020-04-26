@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const Preference = require('../models/preference');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-const USER = {"uid": 1, "full_name": "test-user", "grade": 4.0, "phone_number": 89877};
+//const USER = {"uid": 1, "full_name": "test-user", "grade": 4.0, "phone_number": 89877};
+const USER = {"full_name": "John Doe", "phone_number": "12069793532", min_grade: "3.5"};
 const COURSE = {"cid": 1, "name": "CSE666", "grade": 4.0};
 const USER_TABLE = {"users": [USER, USER, USER]};
 const COURSE_TABLE = {"courses": [COURSE, COURSE, COURSE]};
@@ -14,7 +16,13 @@ router.get('', (req, res, next) => {
     if (cid && uid) {
         res.status(200).json(COURSE);
     } else if (cid) {
-        res.status(200).json(USER_TABLE);
+        Preference.getUsersInCourse(cid, (err, data) => {
+            if (err) {
+                res.status(400).json({success: false, err: err});
+            } else {
+                res.status(200).json(data);
+            }
+        });
     } else if (uid) {
         res.status(200).json(COURSE_TABLE);
     } else if (Object.keys(req.query).length === 0) {
@@ -26,7 +34,13 @@ router.get('', (req, res, next) => {
 });
 
 router.post('/add', (req, res, next) => {
-    res.status(200).json({success: true, msg: "Ok!"});
+    Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, (err, data) => {
+        if (err) {
+            res.status(400).json({success: false, msg: "You are already in this course!"});
+        } else {
+            res.status(200).json({success: true, msg: "Ok!"});
+        }
+    });
 });
 
 router.post('/remove', (req, res, next) => {
