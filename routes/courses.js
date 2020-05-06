@@ -15,7 +15,14 @@ router.get('', (req, res, next) => {
 });
 
 router.get('/get', (req, res, next) => {
-    res.status(200).json({success: true, msg: "Ok!"});
+    var cid = req.query.cid;
+    Course.getCourseById(cid, (err, data) => {
+        if (err) {
+            res.status(400).json({success: false, msg: "Error retrieving course information."});
+        } else {
+            res.status(200).json(data);
+        }
+    });
 });
 
 router.post('/add', (req, res, next) => {

@@ -17,7 +17,12 @@ module.exports.getAllCourses = (callback) => {
 
 module.exports.getCourseById = (id, callback) => {
     const query = `SELECT * FROM Courses WHERE cid=$1`;
-    db.one(query, [id]);
+    db.one(query, [id])
+	.then((res) => {
+	    callback(null, res);
+	}).catch((err) => {
+	    callback(err, false);
+	});
 };
 
 module.exports.addCourse = (name, description, callback) => {
