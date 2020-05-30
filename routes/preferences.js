@@ -4,7 +4,6 @@ const Preference = require('../models/preference');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
-//const USER = {"uid": 1, "full_name": "test-user", "grade": 4.0, "phone_number": 89877};
 const USER = {"full_name": "John Doe", "phone_number": "12069793532", min_grade: "3.5"};
 const COURSE = {"cid": 1, "name": "CSE666", "grade": 4.0};
 const USER_TABLE = {"users": [USER, USER, USER]};
@@ -43,8 +42,24 @@ router.post('/add', (req, res, next) => {
     });
 });
 
+router.post('/check', (req, res, next) => {
+    Preference.isUserInCourse(req.body.uid, req.body.cid, (err, data) => {
+	if (err) {
+	    res.status(400).json({success: false, msg: "Error checking if user is in course"});
+	} else {
+	    res.status(200).json({success: true, msg: data});
+	}
+    });
+});
+
 router.post('/remove', (req, res, next) => {
-    res.status(200).json({success: true, msg: "Ok!"});
+    Preference.removeUserFromCourse(req.body.uid, req.body.cid, (err, data) => {
+	if (err) {
+	    res.status(400).json({success: false, msg: "Failed to delete user entry from course!"});
+	} else {
+	    res.status(200).json({success: true, msg: "Ok!"});
+	}
+    });
 });
 
 router.post('/edit', (req, res, next) => {
