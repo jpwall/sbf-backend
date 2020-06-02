@@ -15,6 +15,17 @@ module.exports.getUsersInCourse = (cid, callback) => {
         });
 };
 
+module.exports.getCoursesByUser = (uid, callback) => {
+    const query = `SELECT c.subject_name, p.min_grade, c.cid FROM Courses c INNER JOIN Preferences p ON p.cid = c.cid AND p.uid = $1`;
+    db.manyOrNone(query, [uid])
+        .then((res) => {
+            callback(null, res);
+        })
+        .catch((err) => {
+            callback(err, false);
+        });
+};
+
 module.exports.addUserToCourse = (uid, cid, minGrade, callback) => {
     const query = `INSERT INTO Preferences (uid, cid, min_grade) VALUES ($1, $2, $3) RETURNING *`;
     db.one(query, [uid, cid, minGrade])
@@ -39,7 +50,7 @@ module.exports.isUserInCourse = (uid, cid, callback) => {
 
 module.exports.removeUserFromCourse = (uid, cid, callback) => {
     const query = `DELETE FROM Preferences WHERE uid=$1 AND cid=$2`;
-    db.one(query, [uid, cid])
+    db.oneOrNone(query, [uid, cid])
 	.then((res) => {
 	    callback(null, res);
 	})

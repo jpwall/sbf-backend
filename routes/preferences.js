@@ -32,6 +32,16 @@ router.get('', (req, res, next) => {
     
 });
 
+router.post('/userCourses', (req, res, next) => {
+    Preference.getCoursesByUser(req.body.uid, (err, data) => {
+        if (err) {
+            res.status(400).json({success: false, msg: "Unable to retrieve your listed courses"});
+        } else {
+            res.status(200).json({success: true, msg: data});
+        }
+    });
+});
+
 router.post('/add', (req, res, next) => {
     Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, (err, data) => {
         if (err) {
