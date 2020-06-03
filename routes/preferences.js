@@ -67,7 +67,7 @@ router.post('/remove', (req, res, next) => {
 	if (err) {
 	    res.status(400).json({success: false, msg: "Failed to delete user entry from course!"});
 	} else {
-	    res.status(200).json({success: true, msg: "Ok!"});
+	    res.status(200).json({success: true, msg: req.body.cid});
 	}
     });
 });
