@@ -15,6 +15,16 @@ module.exports.getAllCourses = (callback) => {
         });
 };
 
+module.exports.searchAllCourses = (search, callback) => {
+    const query = `SELECT cid, subject_name FROM courses WHERE subject_name LIKE '$1:value%'`;
+    db.manyOrNone(query, [search])
+        .then((res) => {
+            callback(null, res);
+        }).catch((err) => {
+            callback(err, false);
+        });
+};
+
 module.exports.getCourseById = (id, callback) => {
     const query = `SELECT * FROM Courses WHERE cid=$1`;
     db.one(query, [id])
