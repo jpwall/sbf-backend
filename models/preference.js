@@ -5,7 +5,7 @@ const cn = process.env.DATABASE_URL;
 const db = pgp(cn);
 
 module.exports.getUsersInCourse = (cid, callback) => {
-    const query = `SELECT u.uid, u.full_name, u.phone_number, p.min_grade FROM Users u INNER JOIN Preferences p ON u.uid = p.uid WHERE p.cid = $1`;
+    const query = `SELECT u.uid, u.full_name, u.phone_number, p.min_grade FROM Users u INNER JOIN Preferences p ON u.uid = p.uid WHERE p.cid = $1 ORDER BY p.min_grade DESC`;
     db.manyOrNone(query, [cid])
         .then((res) => {
             callback(null, res);
