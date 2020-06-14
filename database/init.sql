@@ -1,10 +1,11 @@
 CREATE TABLE IF NOT EXISTS Users (
   uid SERIAL PRIMARY KEY,
   full_name TEXT NOT NULL,
-  email TEXT NOT NULL UNIQUE,
+  username TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
   last_active timestamp,
-  phone_number bigint,
+  phone_number bigint NOT NULL UNIQUE,
+  verified BOOLEAN NOT NULL,
   access_level int DEFAULT 1
 );
 

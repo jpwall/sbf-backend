@@ -5,17 +5,20 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 router.post('/register', (req, res, next) => {
-    User.addUser(req.body.name, req.body.email, req.body.password, req.body.phone, (err, user) => {
-        if (err) res.status(400).json({success: false, msg: "Failed to register user!"}); 
-        else res.status(200).json({success: true, msg: "Ok!"});
+    User.addUser(req.body.name, req.body.username, req.body.password, req.body.phone, (err, user) => {
+        if (err) {
+            res.status(400).json({success: false, msg: "Failed to register! There is already an account with the specified username or phone number."});
+        } else {
+            res.status(200).json({success: true, msg: "Ok!"});
+        }
     });
 });
 
 router.post('/authenticate', (req, res, next) => {
-    const email = req.body.email;
+    const username = req.body.username;
     const password = req.body.password;
 
-    User.getUserByEmail(email, (err, user) => {
+    User.getUserByUsername(username, (err, user) => {
         if (err) {
             res.status(400).json({success: false, msg: "Could not connect to the database."});
         } else if (!user) {
@@ -25,7 +28,7 @@ router.post('/authenticate', (req, res, next) => {
                 if (isMatch) {
                     const token = jwt.sign(user, process.env.SECRET, {
                         expiresIn: 604800
-                    })
+                    });
 
                     res.status(200).json({
                         success: true,
@@ -33,19 +36,16 @@ router.post('/authenticate', (req, res, next) => {
                         user: {
                             uid: user.uid,
                             name: user.full_name,
-                            email: user.email
+                            username: user.username,
+                            verified: user.verified
                         }
-                    })
+                    });
                 } else {
                     res.status(400).json({success: false, msg: "Wrong Password!"});
                 }
-            })
+            });
         }
-    })
-})
-
-router.get('/profile', passport.authenticate('jwt',{session:false}), (req, res, next) => {
-    res.status(200).json({user: req.user});
+    });
 });
 
 module.exports = router;
