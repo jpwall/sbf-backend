@@ -35,13 +35,17 @@ router.post('/userCourses', passport.authenticate('jwt', { session: false }), (r
 
 router.post('/add', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     if (req.user.uid == req.body.uid) {
-        Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, (err, data) => {
-            if (err) {
-                res.status(400).json({success: false, msg: "You are already in this course!"});
-            } else {
-                res.status(200).json({success: true, msg: "Ok!"});
-            }
-        });
+        if (req.body.minGrade.length <= 3) {
+            Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, (err, data) => {
+                if (err) {
+                    res.status(400).json({success: false, msg: "You are already in this course!"});
+                } else {
+                    res.status(200).json({success: true, msg: "Ok!"});
+                }
+            });
+        } else {
+            res.status(400).json({success: false, msg: "Please use a GPA format of x.y, i.e. 2.0, 3.5, 4.0"});
+        }
     } else {
         res.status(401).json({success: false, msg: "You are not allowed to modify data for another user."});        
     }

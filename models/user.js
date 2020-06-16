@@ -13,6 +13,17 @@ module.exports.getUserById = (id, callback) => {
     db.oneOrNone(query, [id]);
 }
 
+module.exports.getPhoneByUser = (uid, callback) => {
+    const query = `SELECT phone_number FROM Users WHERE uid=$1`;
+    db.oneOrNone(query, [uid])
+        .then((res) => {
+            callback(null, res);
+        })
+        .catch((err) => {
+            callback(err, false);
+        });
+}
+
 module.exports.getUserByUsername = (username, callback) => {
     const query = `
         SELECT * 
@@ -47,6 +58,18 @@ module.exports.addUser = (name, username, password, phone, callback) => {
                 });
         });
     });
+}
+
+module.exports.updateVerify = (uid, callback) => {
+    const query = `UPDATE Users SET verified=true WHERE uid=$1`;
+    db.oneOrNone(query, [uid])
+        .then((res) => {
+            callback(null, res);
+        })
+        .catch((err) => {
+            console.log('ERR: ', err);
+            callback(err, false);
+        });
 }
 
 module.exports.remUser = (username, callback) => {
