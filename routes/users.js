@@ -9,9 +9,10 @@ const serviceId = process.env.TWILIO_STUDIUS_SID;
 const twilio = require('twilio')(accountSid, authToken);
 
 router.post('/register', (req, res, next) => {
-    if ((req.body.username.length >= 1 && req.body.username.length <= 25) || req.body.password.length <= 25) {
+    if ((req.body.username.length >= 1 && req.body.username.length <= 25) || (req.body.password.length >= 8 && req.body.password.length <= 25)) {
         User.addUser(req.body.name, req.body.username, req.body.password, req.body.phone, (err, user) => {
             if (err) {
+                console.log("ERR: ", err);
                 res.status(400).json({success: false, msg: "Failed to register! There is already an account with the specified username or phone number."});
             } else {
                 res.status(200).json({success: true, msg: "Ok!"});
@@ -26,7 +27,7 @@ router.post('/authenticate', (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    if ((req.body.username.length >= 1 && req.body.username.length <= 25) || req.body.password.length <= 25) {
+    if ((req.body.username.length >= 1 && req.body.username.length <= 25) || (req.body.password.length >= 8 && req.body.password.length <= 25)) {
         User.getUserByUsername(username, (err, user) => {
             if (err) {
                 res.status(400).json({success: false, msg: "Could not connect to the database."});
@@ -87,33 +88,37 @@ router.post('/verifyCheck', passport.authenticate('jwt', { session: false }), (r
             if (data.phone_number == req.body.phone) {
                 const phone = '+' + req.body.phone;
                 const code = req.body.code;
-                twilio.verify.services(serviceId)
-                    .verificationChecks
-                    .create({to: phone, code: code})
-                    .then(verification_check => {
-                        if (verification_check.status == "approved") {
-                            User.updateVerify(req.user.uid, (err, data) => {
-                                if (err) {
-                                    res.status(400).json({success: false, msg: "Internal error. Please contact support."});
-                                } else {
-                                    const token = req.get('Authorization');
-                                    res.status(200).json({
-                                        success: true,
-                                        token: token,
-                                        user: {
-                                            uid: req.user.uid,
-                                            name: req.user.full_name,
-                                            username: req.user.username,
-                                            phone: req.user.phone,
-                                            verified: true
-                                        }
-                                    });
-                                }
-                            });
-                        } else {
-                            res.status(400).json({success: false, msg: "Wrong verification code. Please try again."});
-                        }
-                    });
+                if (req.body.code.length == 6) {
+                    twilio.verify.services(serviceId)
+                        .verificationChecks
+                        .create({to: phone, code: code})
+                        .then(verification_check => {
+                            if (verification_check.status == "approved") {
+                                User.updateVerify(req.user.uid, (err, data) => {
+                                    if (err) {
+                                        res.status(400).json({success: false, msg: "Internal error. Please contact support."});
+                                    } else {
+                                        const token = req.get('Authorization');
+                                        res.status(200).json({
+                                            success: true,
+                                            token: token,
+                                            user: {
+                                                uid: req.user.uid,
+                                                name: req.user.full_name,
+                                                username: req.user.username,
+                                                phone: req.user.phone,
+                                                verified: true
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                res.status(400).json({success: false, msg: "Wrong verification code. Please try again."});
+                            }
+                        });
+                } else {
+                    res.status(400).json({success: false, msg: "Please enter a 6 digit code"});
+                }
             } else {
                 res.status(401).json({success: false, msg: "You are not allowed to verify the phone number for another user."});
             }
