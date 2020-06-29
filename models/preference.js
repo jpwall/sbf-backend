@@ -5,7 +5,7 @@ const cn = process.env.DATABASE_URL;
 const db = pgp(cn);
 
 module.exports.getUsersInCourse = (cid, callback) => {
-    const query = `SELECT u.uid, u.full_name, u.phone_number, p.min_grade FROM Users u INNER JOIN Preferences p ON u.uid = p.uid WHERE p.cid = $1 ORDER BY p.min_grade DESC`;
+    const query = `SELECT u.uid, u.full_name, u.phone_number, p.min_grade, p.course_role FROM Users u INNER JOIN Preferences p ON u.uid = p.uid WHERE p.cid = $1 ORDER BY p.min_grade DESC`;
     db.manyOrNone(query, [cid])
         .then((res) => {
             callback(null, res);
@@ -26,9 +26,9 @@ module.exports.getCoursesByUser = (uid, callback) => {
         });
 };
 
-module.exports.addUserToCourse = (uid, cid, minGrade, callback) => {
-    const query = `INSERT INTO Preferences (uid, cid, min_grade) VALUES ($1, $2, $3) RETURNING *`;
-    db.one(query, [uid, cid, minGrade])
+module.exports.addUserToCourse = (uid, cid, minGrade, courseRole, callback) => {
+    const query = `INSERT INTO Preferences (uid, cid, min_grade, course_role) VALUES ($1, $2, $3, $4) RETURNING *`;
+    db.one(query, [uid, cid, minGrade, courseRole])
         .then((res) => {
             callback(null, res);
         })

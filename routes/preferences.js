@@ -40,13 +40,25 @@ router.post('/userCourses', passport.authenticate('jwt', { session: false }), (r
 router.post('/add', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     if (req.user.uid == req.body.uid) {
         if (req.body.minGrade.length <= 3 && (req.body.minGrade <= 4 && req.body.minGrade >= 0)) {
-            Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, (err, data) => {
-                if (err) {
-                    res.status(400).json({success: false, msg: "You are already in this course!"});
+            if (req.body.role >= 0 && req.body.role <= 2) {
+                var courseRole = "";
+                if (req.body.role == 0) {
+                    courseRole = "Student";
+                } else if (req.body.role == 1) {
+                    courseRole = "TA";
                 } else {
-                    res.status(200).json({success: true, msg: "Ok!"});
+                    courseRole = "Tutor";
                 }
-            });
+                Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, courseRole, (err, data) => {
+                    if (err) {
+                        res.status(400).json({success: false, msg: "You are already in this course!"});
+                    } else {
+                        res.status(200).json({success: true, msg: "Ok!"});
+                    }
+                });
+            } else {
+                res.status(400).json({success: false, msg: "Unknown course role"});
+            }
         } else {
             res.status(400).json({success: false, msg: "Please use a GPA format of x.y, i.e. 2.0, 3.5, 4.0"});
         }

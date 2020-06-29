@@ -19,5 +19,6 @@ CREATE TABLE IF NOT EXISTS Preferences (
   uid SERIAL REFERENCES Users(uid),
   cid SERIAL REFERENCES Courses(cid),
   min_grade float(2),
+  course_role TEXT NOT NULL,
   PRIMARY KEY (uid,cid)
 );
