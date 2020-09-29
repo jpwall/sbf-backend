@@ -1,13 +1,15 @@
 // Express Set Up
 const express = require('express');
 const server = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
+//const pgp = require('pg-promise')();
 
 // PSQL Set Up
 const {Client} = require('pg');
 const db = new Client({
     connectionString: process.env.DATABASE_URL
 });
+//const db = pgp(process.env.DATABASE_URL);
 db.connect(err => {
     if (err) {
       console.error('connection error', err.stack)
@@ -33,7 +35,7 @@ const passport = require('passport');
 server.use(passport.initialize());
 server.use(passport.session())
 require('./config/passport')(passport);
-
+require('dotenv').config();
 // Index route
 server.get('/', (res, req) => {
     res.status(400).send("Invalid endpoint!");

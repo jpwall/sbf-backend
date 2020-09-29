@@ -10,17 +10,13 @@ const USER_TABLE = {"users": [USER, USER, USER]};
 const COURSE_TABLE = {"courses": [COURSE, COURSE, COURSE]};
 
 router.get('', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-    if (req.query.cid <= 15907 || req.query.cid >= 0) {
-        Preference.getUsersInCourse(req.query.cid, (err, data) => {
-            if (err) {
-                res.status(400).json({success: false, err: err});
-            } else {
-                res.status(200).json(data);
-            }
-        });
-    } else {
-        res.status(400).json({success: false, msg: "Invalid course number"});
-    }
+    Preference.getUsersInCourse(req.query.cid, (err, data) => {
+        if (err) {
+            res.status(400).json({success: false, err: err});
+        } else {
+            res.status(200).json(data);
+        }
+    });
 });
 
 router.post('/userCourses', passport.authenticate('jwt', { session: false }), (req, res, next) => {
@@ -39,13 +35,10 @@ router.post('/userCourses', passport.authenticate('jwt', { session: false }), (r
 
 router.post('/add', passport.authenticate('jwt', { session: false }), (req, res, next) => {
     if (req.user.uid == req.body.uid) {
-        if (req.body.minGrade.length <= 3 && (req.body.minGrade <= 4 && req.body.minGrade >= 0)) {
-            if (req.body.role >= 0 && req.body.role <= 2) {
-                var courseRole = "";
-                if (req.body.role == 0) {
-                    courseRole = "Student";
-                } else if (req.body.role == 1) {
-                    courseRole = "TA";
+        if (req.body.minGrade.length <= 3) {
+            Preference.addUserToCourse(req.body.uid, req.body.cid, req.body.minGrade, (err, data) => {
+                if (err) {
+                    res.status(400).json({success: false, msg: "You are already in this course!"});
                 } else {
                     courseRole = "Tutor";
                 }
@@ -68,38 +61,30 @@ router.post('/add', passport.authenticate('jwt', { session: false }), (req, res,
 });
 
 router.post('/check', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-    if (req.body.cid <= 15907 || req.body.cid >= 0) {
-        if (req.user.uid == req.body.uid) {
-            Preference.isUserInCourse(req.body.uid, req.body.cid, (err, data) => {
-	        if (err) {
-	            res.status(400).json({success: false, msg: "Error checking if user is in course"});
-	        } else {
-	            res.status(200).json({success: true, msg: data});
-	        }
-            });
-        } else {
-            res.status(401).json({success: false, msg: "You are not allowed to access data from another user."});        
-        }
+    if (req.user.uid == req.body.uid) {
+        Preference.isUserInCourse(req.body.uid, req.body.cid, (err, data) => {
+	    if (err) {
+	        res.status(400).json({success: false, msg: "Error checking if user is in course"});
+	    } else {
+	        res.status(200).json({success: true, msg: data});
+	    }
+        });
     } else {
-        res.status(400).json({success: false, msg: "Invalid course number"});
+        res.status(401).json({success: false, msg: "You are not allowed to access data from another user."});        
     }
 });
 
 router.post('/remove', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-    if (req.body.cid <= 15907 || req.body.cid >= 0) {
-        if (req.user.uid == req.body.uid) {
-            Preference.removeUserFromCourse(req.body.uid, req.body.cid, (err, data) => {
-	        if (err) {
-	            res.status(400).json({success: false, msg: "Failed to delete user entry from course!"});
-	        } else {
-	            res.status(200).json({success: true, msg: req.body.cid});
-	        }
-            });
-        } else {
-            res.status(401).json({success: false, msg: "You are not allowed to modify data for another user."});
-        }
+    if (req.user.uid == req.body.uid) {
+        Preference.removeUserFromCourse(req.body.uid, req.body.cid, (err, data) => {
+	    if (err) {
+	        res.status(400).json({success: false, msg: "Failed to delete user entry from course!"});
+	    } else {
+	        res.status(200).json({success: true, msg: req.body.cid});
+	    }
+        });
     } else {
-        res.status(400).json({success: false, msg: "Invalid course number"});
+        res.status(401).json({success: false, msg: "You are not allowed to modify data for another user."});
     }
 });
 

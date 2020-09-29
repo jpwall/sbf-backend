@@ -19,18 +19,14 @@ router.post('/search', (req, res, next) => {
 });
 
 router.get('/get', passport.authenticate('jwt', { session: false }), (req, res, next) => {
-    if (req.query.cid <= 15907 || req.query.cid >= 0) {
-        var cid = req.query.cid;
-        Course.getCourseById(cid, (err, data) => {
-            if (err) {
-                res.status(400).json({success: false, msg: "Error retrieving course information."});
-            } else {
-                res.status(200).json(data);
-            }
-        });
-    } else {
-        res.status(400).json({success: false, msg: "Invalid course number"});
-    }
+    var cid = req.query.cid;
+    Course.getCourseById(cid, (err, data) => {
+        if (err) {
+            res.status(400).json({success: false, msg: "Error retrieving course information."});
+        } else {
+            res.status(200).json(data);
+        }
+    });
 });
 
 module.exports = router;

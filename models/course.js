@@ -16,7 +16,7 @@ module.exports.getAllCourses = (callback) => {
 };
 
 module.exports.searchAllCourses = (search, callback) => {
-    const query = `SELECT cid, subject_name FROM courses WHERE subject_name LIKE '$1#%'`;
+    const query = `SELECT cid, subject_name FROM courses WHERE subject_name LIKE '$1:value%'`;
     db.manyOrNone(query, [search])
         .then((res) => {
             callback(null, res);

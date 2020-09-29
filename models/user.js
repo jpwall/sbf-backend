@@ -1,8 +1,10 @@
 const pgp = require('pg-promise')({
     // Initialization Options
 });
+require('dotenv').config()
+console.log(process.env);
 const cn = process.env.DATABASE_URL;
-const db = pgp(cn);
+const db = pgp(cn.toString());
 const bcrypt = require('bcryptjs');
 
 module.exports.getUserById = (id, callback) => {
